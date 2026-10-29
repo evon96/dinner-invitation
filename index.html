@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dinner Invitation 💕</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: linear-gradient(
+                135deg, #fff0f5, #ffe0ec
+            );
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            padding: 25px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: clamp(26px, 6vw, 38px);
+            line-height: 1.4;
+        }
+
+        p {
+            color: #a64d79;
+            font-size: 19px;
+            min-height: 50px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+            min-height: 60px;
+        }
+
+        button {
+            border: none;
+            border-radius: 16px;
+            padding: 15px 28px;
+            font-size: 19px;
+            cursor: pointer;
+            white-space: nowrap;
+            touch-action: manipulation;
+        }
+
+        #yes {
+            background: #ff69b4;
+            color: white;
+            box-shadow: 0 5px 15px #ff69b455;
+        }
+
+        #yes:hover {
+            background: #f54298;
+        }
+
+        #no {
+            background: #dddddd;
+            color: #444444;
+            z-index: 5;
+        }
+
+        .heart {
+            position: fixed;
+            bottom: -50px;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatUp linear forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.85;
+            }
+
+            85% {
+                opacity: 0.85;
+            }
+
+            100% {
+                transform: translateY(-110vh)
+                           rotate(30deg);
+                opacity: 0;
+            }
+        }
+
+        .burst {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10;
+            animation: burstOut 1.5s ease-out forwards;
+        }
+
+        @keyframes burstOut {
+            0% {
+                transform: translate(0, 0) scale(0.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform:
+                    translate(var(--x), var(--y))
+                    scale(1.5);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 id="question">
+            Will you have dinner with me? 💕
+        </h1>
+
+        <p id="subtitle">
+            Pretty please? 🥺
+        </p>
+
+        <div class="buttons">
+            <button id="yes" onclick="sayYes()">
+                Yes! 💗
+            </button>
+
+            <button id="no">
+                No 😢
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const noButton = document.getElementById("no");
+        const yesButton = document.getElementById("yes");
+        const question = document.getElementById("question");
+        const subtitle = document.getElementById("subtitle");
+
+        let escapeCount = 0;
+        let accepted = false;
+
+        const messages = [
+            "Are you sure? 🥺",
+            "Please reconsider! 😭",
+            "Dinner will be fun! 💕",
+            "Why are you running away? 🤣",
+            "Just say YES! 💗",
+            "I'll buy you dessert! 🍰",
+            "Pretty pleaseeeee! 🥹"
+        ];
+
+        // Make the No button escape
+        function runAway() {
+            if (accepted) return;
+
+            const margin = 15;
+
+            const maxX = Math.max(
+                margin,
+                window.innerWidth -
+                noButton.offsetWidth - margin
+            );
+
+            const maxY = Math.max(
+                margin,
+                window.innerHeight -
+                noButton.offsetHeight - margin
+            );
+
+            const randomX =
+                margin + Math.random() *
+                (maxX - margin);
+
+            const randomY =
+                margin + Math.random() *
+                (maxY - margin);
+
+            noButton.style.position = "fixed";
+            noButton.style.left = randomX + "px";
+            noButton.style.top = randomY + "px";
+
+            escapeCount++;
+
+            subtitle.innerText =
+                messages[(escapeCount - 1) % messages.length];
+        }
+
+        // Desktop mouse interaction
+        noButton.addEventListener(
+            "mouseenter", runAway
+        );
+
+        // Mobile touch interaction
+        noButton.addEventListener(
+            "touchstart",
+            function(event) {
+                event.preventDefault();
+                runAway();
+            },
+            { passive: false }
+        );
+
+        // Fallback for clicks
+        noButton.addEventListener(
+            "click", runAway
+        );
+
+        // Create floating hearts
+        const heartEmojis = [
+            "💗", "💕", "💖", "❤️", "🩷"
+        ];
+
+        function createHeart() {
+            const heart = document.createElement("div");
+
+            heart.className = "heart";
+
+            heart.innerText =
+                heartEmojis[
+                    Math.floor(
+                        Math.random() * heartEmojis.length
+                    )
+                ];
+
+            heart.style.left =
+                Math.random() * 100 + "vw";
+
+            heart.style.fontSize =
+                (15 + Math.random() * 20) + "px";
+
+            heart.style.animationDuration =
+                (4 + Math.random() * 4) + "s";
+
+            document.body.appendChild(heart);
+
+            heart.addEventListener(
+                "animationend",
+                function() {
+                    heart.remove();
+                }
+            );
+        }
+
+        // Continuous floating hearts
+        setInterval(createHeart, 400);
+
+        // Celebration when Yes is clicked
+        function sayYes() {
+            accepted = true;
+
+            question.innerText =
+                "YAYYY! IT'S A DATE! 💖🎉";
+
+            subtitle.innerText =
+                "I knew you'd say yes! 🥰🍽️";
+
+            yesButton.style.display = "none";
+            noButton.style.display = "none";
+
+            createHeartBurst();
+        }
+
+        // Burst of hearts
+        function createHeartBurst() {
+            for (let i = 0; i < 35; i++) {
+                const heart = document.createElement("div");
+
+                heart.className = "burst";
+                heart.innerText = "💖";
+
+                heart.style.left = "50vw";
+                heart.style.top = "50vh";
+
+                heart.style.fontSize =
+                    (15 + Math.random() * 20) + "px";
+
+                const angle = Math.random() *
+                    Math.PI * 2;
+
+                const distance =
+                    80 + Math.random() * 250;
+
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+
+                heart.style.setProperty(
+                    "--x", x + "px"
+                );
+
+                heart.style.setProperty(
+                    "--y", y + "px"
+                );
+
+                document.body.appendChild(heart);
+
+                heart.addEventListener(
+                    "animationend",
+                    function() {
+                        heart.remove();
+                    }
+                );
+            }
+        }
+    </script>
+
+</body>
+</html>
